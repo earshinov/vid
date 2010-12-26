@@ -20,10 +20,16 @@
         }).append($objects);
         $('body').css({
           'padding': 0,
-          'width': '100%',
-          'height': '100%',
           'background': 'Black'
         }).empty().append($div);
+        $('html, body').css({
+          'width': '100%',
+          'min-width': '100%',
+          'max-width': '100%',
+          'height': '100%',
+          'min-height': '100%',
+          'max-height': '100%'
+        });
         finalize();
       }
     })
