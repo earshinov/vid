@@ -5,7 +5,7 @@
   $('body')
     .bind('click.vid', function(e) {
       e.preventDefault();
-      var $objects = $(e.target).children('object, embed').filter(':not(embed object)');
+      var $objects = $(e.target).find('object, embed').filter(':not(embed object)');
       if ($objects.length === 1) {
         $objects.css({
           'margin': 0
