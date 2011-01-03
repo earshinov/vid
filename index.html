@@ -1,12 +1,22 @@
 <meta charset='utf-8'/>
 <style>
   body {
+    margin: 0;
+    padding: 0;
+
     background-color: White;
     color: Black;
+    line-height: 1.4;
+  }
+  #everything {
+    margin: 0 auto;
+    max-width: 45em;
+    }
+  h1 {
+    font-size: 120%;
     }
   .button {
     display: inline-block;
-    margin: 2px 0;
     background-color: DarkSlateGray;
     padding: 2px 8px;
     -moz-border-radius: 4px;
@@ -23,34 +33,60 @@
     }
 </style>
 <title>Vid</title>
+<div id='everything'>
+
+<h1>About</h1>
+
 <p>
 „Vid“ is a simple bookmarklet that styles a page for comfortable viewing of non-fullscreen video.
-It allows you to choose a video object and then
+It allows you to choose a video object and „extracts“ it, i.e.
 </p>
-<ol>
+<ul>
   <li>removes everything from the page except the chosen object;</li>
   <li>centers the object on the page;</li>
   <li>makes page background black.</li>
-</ol>
-<p>How to use:</p>
-<ol>
-  <li>Drag this button
-    <a class="button" href="javascript:(function(){function%20loadScript(a){var%20c=document.createElement('script');c.type='text/javascript';c.src=a;var%20d=document.getElementsByTagName('head')[0];d.appendChild(c)}loadScript('https://github.com/earshinov/vid/raw/master/vid.min.js')})()">Vid</a>
-    to the bookmarks bar in your browser.  A new bookmark should appear.
-  </li>
-  <li>
-    On a page with a video activate the bookmarklet by clicking the bookmark you added at the previous step.
-    Using your mouse/touchpad/etc. choose a page block containing a single video object (bookmarklet will help you showind red outline around the active block).
-    Confirm your choice with left click or cancel by pressing Esc.
-  </li>
-</ol>
-<p>Notes:</p>
-<ul>
-  <li>
-    You should click a block around a video object, not the object itself.
-    The bookmarklet cannot catch a click event on an object.
-  </li>
-  <li>When applying the bookmarklet, you may lose video position and already downloaded data.</li>
 </ul>
-<p>Tested in Firefox 3.6.</p>
+
+<h1>How to use</h1>
+
+<p>
+Drag this button <a class="button" href="javascript:(function(){function%20loadScript(a){var%20c=document.createElement('script');c.type='text/javascript';c.src=a;var%20d=document.getElementsByTagName('head')[0];d.appendChild(c)}loadScript('https://github.com/earshinov/vid/raw/master/vid.min.js')})()">Vid</a> to the bookmarks bar in your browser.
+A new bookmark should appear.
+</p>
+
+<p>
+On a page with a video activate the bookmarklet by clicking the bookmark and then:
+</p>
+<ol>
+  <li>
+    <p>
+    Hover cursor over a page block containing a video object.
+    Bookmarklet will
+    </p>
+    <ul>
+      <li>show a red outline around the block;</li>
+      <li>automatically locate the first object within the block and highlight it with yellow.</li>
+    </ul></li>
+  <li>
+    <p>
+    If the yellow-highlighted object is what you need, press Enter or left-click within the red-outlined block to confirm your choice
+    (<em>don't click the object itself as the bookmarklet cannot catch it</em>).
+    Otherwise, you can use your mouse/touchpad/etc. again to select a smaller page block containing just the video you want.
+    Alternatively, you can iterate objects within the red-onlined block using Space or Tab (hold Shift to reverse).
+    </p>
+  </li>
+</ol>
+
+<p>At any time, you can cancel by pressing Esc.</p>
+
+<p><em>Warning</em>: extraction may cause a loss of video position and already downloaded data.</p>
+
+<h1>Further Notes</h1>
+
+<p>
+Tested in Firefox 3.6.
+If the bookmarket does not work in your browser, <a href="https://github.com/earshinov/vid/issues" target="_blank">write an issue</a>.</p>
+
 <p id="footer">This page was last modified at 2011-01-03.</p>
+
+</div>
