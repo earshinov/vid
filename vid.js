@@ -28,8 +28,9 @@
     });
   }
 
+  var outlined = null;
+
   function run($) {
-    var outlined = null;
     $(document.body)
       .bind('click.vid', function(e) {
         e.preventDefault();
