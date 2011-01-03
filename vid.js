@@ -7,16 +7,20 @@
       e.preventDefault();
       var $objects = $(e.target).find('object, embed').filter(':not(embed object)');
       if ($objects.length === 1) {
+        var w = $objects.width();
+        var h = $objects.height();
         $objects.css({
-          'margin': 0
+          'margin': 0,
+          'width': w,
+          'height': h
         });
         var $div = $('<div>').css({
           'position': 'absolute',
           'top': '50%',
           'left': '50%',
           'margin': 0,
-          'margin-left': -$objects.width()/2,
-          'margin-top': -$objects.height()/2
+          'margin-left': -w/2,
+          'margin-top': -h/2
         }).append($objects);
         $('body').css({
           'padding': 0,
