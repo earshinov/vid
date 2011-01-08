@@ -34,101 +34,71 @@
 
     // === GLOBAL VARIABLES ====================================================
 
-    // Contains a single element - a block user selected with cursor, or nothing
-    var $selectedBlock = $([]);
-
-    // All objects within the selected block.
-    // User may iterate these with Space or Tab, choosing an object.
-    // By default, the first element of the set is chosen.
-    var $objects = $([]);
-
-    // An index in $objects where the currently chosen object resides.
-    var chosenIndex = 0;
-
-    // Contains a single element - an element to which an outline
-    // around the currently chosen object is attached, or nothing.
-    // May be not the object itself, but its ancestor.
-    var $chosenOutline = $([]);
-
-    // === HELPER FUNCTIONS 1 ==================================================
-
-    function updateObjects() {
-      var $element = $selectedBlock.length === 1 ? $selectedBlock : $(document);
-      var $newObjects = $element.find('object, embed').filter(':visible:not(embed object)');
-      outlineChosen(false);
-      $objects = $newObjects;
-      chosenIndex = 0;
-      outlineChosen(true);
-    }
-
-    function outlineChosen(on) {
-      if (!on) {
-        $chosenOutline.css('outline', 'none');
-        $chosenOutline = $([]);
-      }
-      else {
-        $chosenOutline = $objects.eq(chosenIndex);
-        if ($chosenOutline.length === 0)
-          return;
-
-        // On Vimeo, video object is wrapped in some blocks of the same dimensions.
-        // Attach outline to the topmost of these blocks so that the outline is visible.
-        for (
-          var $parent = $chosenOutline.parent();
-          $parent.width() === $chosenOutline.width() &&
-          $parent.height() === $chosenOutline.height();
-          $chosenOutline = $parent, $parent = $chosenOutline.parent() ) ;
-
-        $chosenOutline.css('outline', '3px solid yellow');
-      }
-    }
+    // Temporary HTML elements
+    var $wrappers = $([]);
 
     // === CORE CODE ===========================================================
 
-    updateObjects();
-
-    $(document.body)
-      .bind('click.vid', function(e) {
-        e.preventDefault();
-        extractObject();
-      })
-      .bind('mouseover.vid', function(e) {
-        $selectedBlock = $(e.target);
-        $selectedBlock.css('outline', '3px solid red');
-        updateObjects();
-      })
-      .bind('mouseout.vid', function(e) {
-        $(e.target).css('outline', 'none');
-        $selectedBlock = $([]);
-        updateObjects();
-      });
+    // Set wmode: opaque to be able to place HTML elements above objects.
+    // If <embed> comes alone, wrap it in <object>; otherwise the trick
+    // does not work (tested on YouTube with Firefox 3.6 under Linux).
+    //
+    $('embed').attr('wmode', 'opaque').filter(':not(object embed)').wrap('<object>');
+    $('object').each(function() {
+      var $object = $(this);
+      if ($object.children('param[name="wmode"]').attr('value', 'opaque').length === 0)
+        $object.append($(document.createElement('param'), {name: 'wmode', value: 'opaque'}));
+      wrapObject($object);
+    });
 
     $(document).bind('keydown.vid', function(e) {
-      switch (e.which) {
-        case 9: case 32: // Tab or Space iterates
-          var len = $objects.length;
-          if (len > 1) {
-            outlineChosen(false);
-            chosenIndex = (chosenIndex + (e.shiftKey ? len-1 : 1)) % len;
-            outlineChosen(true);
-          }
-          return false;
-        case 13: // Enter extracts
-          extractObject();
-          return false;
-        case 27: // Esc cancels
-          finalize();
-          return false;
+      if (e.which === 27) {
+        // Esc cancels
+        finalize();
+        return false;
       }
     });
 
     // === HELPER FUNCTIONS 2 ==================================================
 
-    function extractObject() {
-      var $object = $objects.eq(chosenIndex);
-      if ($object.length === 0)
-        return;
+    function wrapObject($object) {
+      var pos = $object.offset();
+      var w = $object.width();
+      var h = $object.height();
 
+      var zindex = $object.css('z-index');
+      if (zindex === 'auto') {
+        zindex = 9999;
+        $object.css('z-index', zindex);
+      }
+      else zindex = parseInt(zindex);
+
+      var $div = $(document.createElement('div'))
+        .css({
+          'position': 'absolute',
+          'left': pos.left,
+          'top': pos.top,
+          'width': w,
+          'height': h,
+          'z-index': zindex + 1,
+          'cursor': 'pointer'
+        })
+        .mouseover(function() {
+          $(this).css('outline', '3px Solid Yellow');
+        })
+        .mouseout(function() {
+          $(this).css('outline', 'none');
+        })
+        .mousedown(function(e) {
+          e.preventDefault();
+          extractObject($object);
+        });
+
+      $div.appendTo(document.body);
+      $wrappers = $wrappers.add($div);
+    }
+
+    function extractObject($object) {
       var w = $object.width();
       var h = $object.height();
 
@@ -165,13 +135,8 @@
     }
 
     function finalize() {
-      $selectedBlock.css('outline', 'none');
-      outlineChosen(false);
-      $('body')
-        .unbind('click.vid')
-        .unbind('mouseover.vid')
-        .unbind('mouseout.vid');
-      $(document).unbind('keydown.vid');
+      $wrappers.remove();
+      $(document).unbind('.vid');
     }
   }
 
