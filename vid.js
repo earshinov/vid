@@ -21,14 +21,12 @@
 
   if (window.jQuery !== undefined && jQuery.version === '1.4.3')
     run(jQuery);
-  else {
-    var jqueryOld = window.jQuery;
+  else
     loadScript('http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js', function() {
-      var jqueryNew = window.jQuery;
-      if (jqueryOld !== undefined) window.jQuery = jqueryOld;
-      run(jqueryNew);
+      var $ = jQuery;
+      $.noConflict();
+      run($);
     });
-  }
 
   // === ^^^ HEADING ^^^ =======================================================
 
